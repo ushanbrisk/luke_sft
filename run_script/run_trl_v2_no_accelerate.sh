@@ -1,0 +1,2 @@
+WKDIR=/home/luke/distributed_machine_learning/luke_sft
+accelerate launch --config_file $WKDIR/config_script/ddp.yaml $WKDIR/single_python_code/sft_qwen3_trl_trainer_v2.py --config $WKDIR/config_script/config_distill.yaml

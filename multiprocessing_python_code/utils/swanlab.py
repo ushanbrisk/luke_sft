@@ -1,0 +1,14 @@
+import os
+
+
+def init_swanlab_training(training_args):
+    """
+    Helper function for setting up Weights & Biases logging tools.
+    """
+    if training_args.swanlab_entity is not None:
+        os.environ["SWANLAB_ENTITY"] = training_args.swanlab_entity
+    if training_args.swanlab_project is not None:
+        os.environ["SWANLAB_PROJECT"] = training_args.swanlab_project
+    if training_args.swanlab_run_group is not None:
+        os.environ["SWANLAB_RUN_GROUP"] = training_args.swanlab_run_group
+
