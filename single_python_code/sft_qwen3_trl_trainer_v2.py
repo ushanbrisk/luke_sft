@@ -269,13 +269,19 @@ train_ds = Dataset.from_pandas(train_df)
 # 此处的token, 没有用chat_template模板，而是直接手动拼接，　模板函数的功能，也仅仅是把各个字段封装成 start, end的字段
 #
 
+map_kwargs = {}
+map_kwargs["num_proc"] = 52  # here is the parallel process number
+map_kwargs["desc"] = f"Applying chat template to train dataset"
 
-train_dataset = train_ds.map(process_func, remove_columns=train_ds.column_names)
+train_dataset = train_ds.map(process_func, remove_columns=train_ds.column_names, **map_kwargs)
 
 # 得到验证集
 eval_df = pd.read_json(test_jsonl_new_path, lines=True)
 eval_ds = Dataset.from_pandas(eval_df)
-eval_dataset = eval_ds.map(process_func, remove_columns=eval_ds.column_names)
+map_kwargs = {}
+map_kwargs["num_proc"] = 52  # here is the parallel process number
+map_kwargs["desc"] = f"Applying chat template to eval dataset"
+eval_dataset = eval_ds.map(process_func, remove_columns=eval_ds.column_names,**map_kwargs)
 
 test_df = pd.read_json(test_jsonl_new_path, lines=True)[3:6]
 
@@ -309,12 +315,11 @@ from transformers import TrainingArguments
 
 # DataCollatorForLanguageModeling
 # DataCollatorWithPadding
-data_collator = DataCollatorForLanguageModeling(
-    tokenizer=tokenizer,
-    mlm=False  # we're doing causal LM, not masked LM
-)
-
-
+# data_collator = DataCollatorForLanguageModeling(
+#     tokenizer=tokenizer,
+#     mlm=False  # we're doing causal LM, not masked LM
+# )
+data_collator = DataCollatorForSeq2Seq(tokenizer=tokenizer, padding=True)
 
 torch.cuda.empty_cache()
 
